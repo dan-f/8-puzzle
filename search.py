@@ -48,10 +48,25 @@ def is_goal(s):
     return solution() == s
 
 def itdeep_helper( state, maxdepth ):
-    if maxdepth is 0:
-        return
-    itdeep_helper( n, maxdepth-1)
+    # Base case
+    if maxdepth == 0:
+        return []
 
+    moves = [blankSquare( state )]
+
+    # We found it
+    if is_goal( state ):
+        return moves
+
+    # Loop through neighbors
+    ns = state_neighbors( state )
+    for n in ns:
+        deeper_moves = itdeep_helper(n, maxdepth-1)
+        if len(deeper_moves) > 0:
+            moves.extend( deeper_moves )
+            return moves
+    return []
+        
 def itdeep( state ):
     '''Runs iterative deepening starting from <state>. Returns a list
     of moves for the blank tile to solve the 8-puzzle.'''
