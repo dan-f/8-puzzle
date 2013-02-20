@@ -35,7 +35,7 @@ def manhattanDistance( state ):
     return distances
 
 #
-# Search algorithms
+# Search algorithm helper functions
 #
 def state_neighbors( state ):
     '''Returns the neighbors of the configuration given in <state>.'''
@@ -54,7 +54,10 @@ def to_move_list( moves ):
 def is_goal(s):
     return solution() == s
 
-def itdeep_helper( state, maxdepth ):
+# 
+# Iterative deepening
+# 
+def _itdeep_helper( state, maxdepth ):
     # Base case
     if maxdepth == 0:
         return []
@@ -66,7 +69,7 @@ def itdeep_helper( state, maxdepth ):
     # Loop through neighbors in reverse order, per the lab
     # instructions (we're recursive, not explicit stack-based)
     for n in reversed( state_neighbors(state) ):
-        deeper_moves = itdeep_helper(n, maxdepth-1)
+        deeper_moves = _itdeep_helper(n, maxdepth-1)
         if len(deeper_moves) > 0:
             return [blankSquare( state )] + deeper_moves
     return []
@@ -84,7 +87,7 @@ def itdeep( state ):
     # Do iterative deepening
     solution = itdeep_helper( state, depth )
     while len(solution) == 0:
-        solution = itdeep_helper( state, depth )
+        solution = _itdeep_helper( state, depth )
         depth += 1
 
     return to_move_list( solution )
