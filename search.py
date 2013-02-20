@@ -44,6 +44,13 @@ def state_neighbors( state ):
 
     return [moveBlank(state,n) for n in blank_neighbors]
 
+def to_move_list( moves ):
+    '''Turns a list sequential positions of the blank tile in <moves>
+    and puts them into a list of moves in the format specified in the
+    lab writeup
+    '''
+    return [[i,j] for i,j in zip(moves[:-1],moves[1:])]
+
 def is_goal(s):
     return solution() == s
 
@@ -82,4 +89,5 @@ def itdeep( state ):
     while len(solution) == 0:
         solution = itdeep_helper( state, depth )
         depth += 1
-    return solution
+
+    return to_move_list( solution )
