@@ -59,19 +59,16 @@ def itdeep_helper( state, maxdepth ):
     if maxdepth == 0:
         return []
 
-    moves = [blankSquare( state )]
-
     # We found it
     if is_goal( state ):
-        return moves
+        return [blankSquare( state )]
 
-    # Loop through neighbors
-    ns = state_neighbors( state )
-    for n in ns:
+    # Loop through neighbors in reverse order, per the lab
+    # instructions (we're recursive, not explicit stack-based)
+    for n in reversed( state_neighbors(state) ):
         deeper_moves = itdeep_helper(n, maxdepth-1)
         if len(deeper_moves) > 0:
-            moves.extend( deeper_moves )
-            return moves
+            return [blankSquare( state )] + deeper_moves
     return []
         
 def itdeep( state ):
