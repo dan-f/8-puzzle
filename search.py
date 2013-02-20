@@ -82,7 +82,7 @@ def itdeep( state ):
 
     # The trivial case
     if is_goal( state ):
-        return [blankSquare(state)]
+        return [[blankSquare(state),blankSquare(state)]]
 
     # Do iterative deepening
     solution = itdeep_helper( state, depth )
