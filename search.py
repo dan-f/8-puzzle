@@ -72,21 +72,14 @@ def itdeep( state ):
     of moves for the blank tile to solve the 8-puzzle.'''
 
     depth = 1
-    moves = []
-    fringe = [state]
-    
-    while len(fringe) > 0 and depth > 0:
-        cur_state = fringe.pop()
-        moves.append(blankSquare(cur_state))
 
-        # Test if current state is our goal
-        if is_goal( cur_state ):
-            return moves
+    # The trivial case
+    if is_goal( state ):
+        return [blankSquare(state)]
 
-        neighbors = state_neighbors(cur_state)
-        # Test neighbors to see if any are goal cur_states
-        for n in neighbors:
-            if is_goal(n):
-                return moves + blankSquare(n)
-            fringe.append(n)
-        
+    # Do iterative deepening
+    solution = itdeep_helper( state, depth )
+    while len(solution) == 0:
+        solution = itdeep_helper( state, depth )
+        depth += 1
+    return solution
