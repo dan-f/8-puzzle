@@ -21,7 +21,7 @@ def numWrongTiles( state ):
     return count
 
 def manhattanDistance( state ):
-    '''Returns the manhattan distance for each position in <state>, respectively'''
+    '''Returns the sum of the manhattan distances for each position in <state>'''
     distances = []
     soln = solution()
 
@@ -31,9 +31,10 @@ def manhattanDistance( state ):
     for i in xrange(9):
         our_position = xylocation(i)
         soln_position = xylocation(soln_list.index(state_list[i]))
-        distances.append( sum([abs(x-y) for x,y in zip(our_position,soln_position)]) )
+        distances.append( abs(our_position[0]-soln_position[0]) +
+                          abs(our_position[1]-soln_position[1]) )
 
-    return distances
+    return sum(distances)
 
 #
 # Search algorithm helper functions
@@ -42,7 +43,6 @@ def state_neighbors( state ):
     '''Returns the neighbors of the configuration given in <state>.'''
     blank = blankSquare( state )
     blank_neighbors = neighbors( blank )
-
     return [moveBlank(state,n) for n in blank_neighbors]
 
 def to_move_list( moves ):
