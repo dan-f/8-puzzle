@@ -86,7 +86,7 @@ def itdeep( state ):
         return [[blankSquare(state),blankSquare(state)]]
 
     # Do iterative deepening
-    solution = itdeep_helper( state, depth )
+    solution = _itdeep_helper( state, depth )
     while len(solution) == 0:
         solution = _itdeep_helper( state, depth )
         depth += 1
@@ -112,58 +112,63 @@ class ASNode(object):
             return 0
         return -1
 
-def astar( state, heuristic ):
+def astar( state, heuristic, use_explored=False ):
+    def contains_node( l, node ):
+        return node.state in [n.state for n in l]
+
+    def reconstruct_moves( finish ):
+        moves = [blankSquare(finish.state)]
+        cur_node = finish.prev
+        while cur_node is not None:
+            moves.append(blankSquare(cur_node.state))
+            cur_node = cur_node.prev
+        return to_move_list([x for x in reversed(moves)])
+        
     # check goal state
     if is_goal(state):
         print "Obvious solution"
+        return
 
     cur_node = ASNode(state)
     cur_node.h = heuristic(state)
     cur_node.f = 0
 
     pq = []
-    explored = []
-    pq.append(cur_node)
-    state_map = { state:cur_node }
+    heappush(pq, cur_node)
 
-    looping = set()
-    numiters = 0
+    explored = []
+    state_map = { state:cur_node }
     
     while len(pq) > 0:
-#        print "%d items in the heap"%len(pq)
         v = heappop(pq)
-        explored.append(v)
 
         if is_goal(v.state):
-            print "found it"
-            display(v.state)
-            return
+            return reconstruct_moves( v )
 
-        looping.add(v.state)
-        if numiters == 1000:
-            for l in looping:
-                display(l)
-                print "------------------"
-            numiters = 0
-        numiters += 1
+        if use_explored:
+            explored.append(v)
 
         for neighbor in reversed(state_neighbors(v.state)):
             # Make neighbor into an ASNode if it isn't already
             if neighbor in state_map:
-                neighbor = state_map[neighbor]
+                nn = neighbor
+                neighbor = state_map.get(neighbor)
+                assert nn == neighbor.state
             else:
                 node = ASNode(neighbor)
+                assert node.state == neighbor
                 node.h = heuristic(neighbor)
                 state_map[neighbor] = node
                 neighbor = node
 
-            if neighbor in explored:
+            if use_explored and neighbor in explored:
                 continue
 
-            if v.g + 1 + neighbor.h < neighbor.f or neighbor not in pq:
+            if v.g + neighbor.h < neighbor.f or not contains_node(pq, neighbor):
                 neighbor.prev = v
-                neighbor.g = neighbor.prev.g + 1
                 neighbor.f = v.g + 1 + neighbor.h
-                if neighbor not in pq:
-                    heappush(pq, neighbor)
 
+                if not contains_node(pq, neighbor):
+                    heappush(pq, neighbor)
+                else:
+                    heapify(pq)

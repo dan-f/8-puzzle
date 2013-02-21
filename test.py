@@ -1,31 +1,28 @@
 from search import *
 from puzzle8 import *
-from heapq import *
 
-pq = []
-for x in xrange(10):
-    state = randomState(numMoves=x)
-    node = ASNode(state)
-    node.f = numWrongTiles(state)
-    pq.append(node)
+# Make some puzzles to solve
+trivial = solution()
+easy = 219235348
+medium = 247856372
+hard = 40013692
 
-heapify(pq)
+tests = (trivial,easy,medium,hard)
 
-while len(pq) > 0:
-    print heappop(pq).f
+print "Testing iterative deepening"
+print "---------------------------"
 
-# # Test the astar search
-# print "Testing astar on solution --------------------"
-# s = solution()
-# astar( s, numWrongTiles )
+for test in tests:
+    print "initial state:"
+    display(test)
+    print itdeep(test)
+    print 20*'-'
 
-# print "Testing astar on 4-move-away -----------------"
-# s = randomState(numMoves=4)
-# print "original:"
-# display(s)
-# print ""
-# astar( s, numWrongTiles )
+print "Testing A* search with numWrongTiles"
+print "------------------------------------"
 
-# print "Testing astar on random state ----------------"
-# r = randomState()
-# astar( r, numWrongTiles )
+for test in tests:
+    print "initial state:"
+    display(test)
+    print astar(test, numWrongTiles)
+    print 20*'-'
