@@ -23,3 +23,9 @@ This could take a long time. Grab a beer!
 astar( randomState(), numWrongTiles, use_explored=True )
 `
 Ahhh, that's much better (order of minutes)!!
+
+#### Testing
+
+All of our tests are in test.py. This script will take a long time to run,
+because neither search attempts to keep track of visited states in our
+tests. You can choose to ignore this file if you wish.
