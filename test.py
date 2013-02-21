@@ -18,11 +18,16 @@ for test in tests:
     print itdeep(test)
     print 20*'-'
 
-print "Testing A* search with numWrongTiles"
-print "------------------------------------"
+print "Testing A* search"
+print "-----------------"
 
-for test in tests:
-    print "initial state:"
-    display(test)
-    print astar(test, numWrongTiles)
-    print 20*'-'
+strategies = (numWrongTiles,manhattanDistance)
+for strategy in strategies:
+    title = "Using heuristic: %s"%strategy.__name__
+    print title
+    print len(title)*'-'
+    for test in tests:
+        print "initial state:"
+        display(test)
+        print astar(test, numWrongTiles)
+        print 20*'-'

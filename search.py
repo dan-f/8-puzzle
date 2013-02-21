@@ -7,10 +7,10 @@ from puzzle8 import *
 from heapq import *
 
 # 
-# Heuristic helper functions
+# Heuristic functions
 # 
 def numWrongTiles( state ):
-    '''Returns the number of misplaced tiles for the indicated state'''
+    '''Returns the number of misplaced tiles for the indicated <state>.'''
     sol = solution()
     count = 0
     
@@ -21,7 +21,7 @@ def numWrongTiles( state ):
     return count
 
 def manhattanDistance( state ):
-    '''Returns the sum of the manhattan distances for each position in <state>'''
+    '''Returns the sum of the manhattan distances for each position in <state>.'''
     distances = []
     soln = solution()
 
@@ -48,17 +48,19 @@ def state_neighbors( state ):
 def to_move_list( moves ):
     '''Turns a list sequential positions of the blank tile in <moves>
     and puts them into a list of moves in the format specified in the
-    lab writeup
+    lab writeup.
     '''
     return [[i,j] for i,j in zip(moves[:-1],moves[1:])]
 
 def is_goal(s):
+    '''A simple way to test if state <s> is the solution'''
     return solution() == s
 
 # 
 # Iterative deepening
 # 
 def _itdeep_helper( state, maxdepth ):
+    '''Recursive DFS algorithm'''
     # Base case
     if maxdepth == 0:
         return []
@@ -77,13 +79,14 @@ def _itdeep_helper( state, maxdepth ):
         
 def itdeep( state ):
     '''Runs iterative deepening starting from <state>. Returns a list
-    of moves for the blank tile to solve the 8-puzzle.'''
+    of moves for the blank tile to solve the 8-puzzle.
+    '''
 
     depth = 1
 
     # The trivial case
     if is_goal( state ):
-        place = blankSquare(state),
+        place = blankSquare(state)
         return [[place,place]]
 
     # Do iterative deepening
@@ -94,9 +97,11 @@ def itdeep( state ):
 
     return to_move_list( solution )
 
+#
+# A* search
+# 
 class ASNode(object):
-    """Represents a node in the A* search algorithm.
-    """
+    """Represents a node in the A* search algorithm."""
 
     def __init__(self, state):
         self.state = state
@@ -105,19 +110,24 @@ class ASNode(object):
         self.g = 0
         self.h = 0
 
-    # for our priority queue
     def __cmp__(self, other):
-        if self.f > other.f:
-            return 1
-        elif self.f == other.f:
-            return 0
-        return -1
+        '''This is useful for sorting within a heap.'''
+        return 1 if self.f > other.f else 0 if self.f == other.f else -1
 
 def astar( state, heuristic, use_explored=False ):
+    '''Runs an A* search for a solution to the 8-puzzle, starting from
+    the configuration given by <state>, and calculating heuristic
+    values using <heuristic>. Optionally, make things A LOT FASTER by
+    keeping track of explored nodes.
+    '''
     def contains_node( l, node ):
+        '''Check if the state in <node> is somewhere in a node contained in <l>'''
         return node.state in [n.state for n in l]
 
     def reconstruct_moves( finish ):
+        '''Returns the list of moves the blank tile made to result in
+        the <finish> state.
+        '''
         moves = [blankSquare(finish.state)]
         cur_node = finish.prev
         while cur_node is not None:
@@ -140,6 +150,7 @@ def astar( state, heuristic, use_explored=False ):
     explored = []
     state_map = { state:cur_node }
 
+    # While our priority queue is non-empty
     while len(pq) > 0:
         v = heappop(pq)
 
@@ -149,15 +160,14 @@ def astar( state, heuristic, use_explored=False ):
         if use_explored:
             explored.append(v)
 
+        # Iterate through neighbors backwards
         for neighbor in reversed(state_neighbors(v.state)):
-            # Make neighbor into an ASNode if it isn't already
+            # Get corresponding ASNode for neighbor or create it
             if neighbor in state_map:
                 nn = neighbor
                 neighbor = state_map.get(neighbor)
-                assert nn == neighbor.state
             else:
                 node = ASNode(neighbor)
-                assert node.state == neighbor
                 node.h = heuristic(neighbor)
                 state_map[neighbor] = node
                 neighbor = node
@@ -165,6 +175,7 @@ def astar( state, heuristic, use_explored=False ):
             if use_explored and neighbor in explored:
                 continue
 
+            # Update the neighbor's value for f, possibly adding it to the P.Q.
             if v.g + neighbor.h < neighbor.f or not contains_node(pq, neighbor):
                 neighbor.prev = v
                 neighbor.g = neighbor.prev.g + 1
