@@ -29,7 +29,7 @@ def manhattanDistance( state ):
 
     for i in xrange(9):
         our_position = xylocation(i)
-        soln_position = xylocation(soln_list.index(getTile(state,i))
+        soln_position = xylocation(soln_list.index(getTile(state,i)))
         distance += ( abs(our_position[0]-soln_position[0]) +
                       abs(our_position[1]-soln_position[1]) )
     return distance
