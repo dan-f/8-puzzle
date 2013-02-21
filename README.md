@@ -8,9 +8,9 @@ We have all adhered to the Honor Code on this assignment.
 
 ### Notes
 
-Our astar search function takes an optional keyword argument 'use_explored',
-when set to True will keep track of explored nodes. We highly recommend setting
-this argument, as it will **dramatically** improve speed!!!
+Our 'astar' search function takes an optional keyword argument 'use_explored',
+which when set to True will keep track of explored nodes. We highly recommend
+setting this argument, as it will **dramatically** improve speed!!!
 
 #### A typical call to our astar search:
 `
@@ -22,4 +22,4 @@ This could take a long time. Grab a beer!
 `
 astar( randomState(), numWrongTiles, use_explored=True )
 `
-Ahhh, that's much better!!
+Ahhh, that's much better (order of minutes)!!
