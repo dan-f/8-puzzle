@@ -29,5 +29,5 @@ for strategy in strategies:
     for test in tests:
         print "initial state:"
         display(test)
-        print astar(test, numWrongTiles)
+        print astar(test, strategy)
         print 20*'-'
