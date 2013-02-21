@@ -22,7 +22,7 @@ def numWrongTiles( state ):
 
 def manhattanDistance( state ):
     '''Returns the sum of the manhattan distances for each position in <state>.'''
-    distances = []
+    distance = 0
     soln = solution()
 
     state_list = [getTile(state,i) for i in xrange(9)]
@@ -31,10 +31,9 @@ def manhattanDistance( state ):
     for i in xrange(9):
         our_position = xylocation(i)
         soln_position = xylocation(soln_list.index(state_list[i]))
-        distances.append( abs(our_position[0]-soln_position[0]) +
-                          abs(our_position[1]-soln_position[1]) )
-
-    return sum(distances)
+        distance += ( abs(our_position[0]-soln_position[0]) +
+                      abs(our_position[1]-soln_position[1]) )
+    return distance
 
 #
 # Search algorithm helper functions
@@ -164,7 +163,6 @@ def astar( state, heuristic, use_explored=False ):
         for neighbor in reversed(state_neighbors(v.state)):
             # Get corresponding ASNode for neighbor or create it
             if neighbor in state_map:
-                nn = neighbor
                 neighbor = state_map.get(neighbor)
             else:
                 node = ASNode(neighbor)
