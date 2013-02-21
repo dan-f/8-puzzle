@@ -83,7 +83,8 @@ def itdeep( state ):
 
     # The trivial case
     if is_goal( state ):
-        return [[blankSquare(state),blankSquare(state)]]
+        place = blankSquare(state),
+        return [[place,place]]
 
     # Do iterative deepening
     solution = _itdeep_helper( state, depth )
@@ -126,8 +127,8 @@ def astar( state, heuristic, use_explored=False ):
         
     # check goal state
     if is_goal(state):
-        print "Obvious solution"
-        return
+        place = blankSquare(state)
+        return [[place,place]]
 
     cur_node = ASNode(state)
     cur_node.h = heuristic(state)
@@ -138,7 +139,7 @@ def astar( state, heuristic, use_explored=False ):
 
     explored = []
     state_map = { state:cur_node }
-    
+
     while len(pq) > 0:
         v = heappop(pq)
 
@@ -166,6 +167,7 @@ def astar( state, heuristic, use_explored=False ):
 
             if v.g + neighbor.h < neighbor.f or not contains_node(pq, neighbor):
                 neighbor.prev = v
+                neighbor.g = neighbor.prev.g + 1
                 neighbor.f = v.g + 1 + neighbor.h
 
                 if not contains_node(pq, neighbor):
