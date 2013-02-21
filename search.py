@@ -4,6 +4,7 @@
 # We affirm that we have adhered to the Honor Code in this assignment. #
 ########################################################################
 from puzzle8 import *
+from heapq import *
 
 # 
 # Heuristic helper functions
@@ -91,3 +92,78 @@ def itdeep( state ):
         depth += 1
 
     return to_move_list( solution )
+
+class ASNode(object):
+    """Represents a node in the A* search algorithm.
+    """
+
+    def __init__(self, state):
+        self.state = state
+        self.prev = None
+        self.f = float('inf')
+        self.g = 0
+        self.h = 0
+
+    # for our priority queue
+    def __cmp__(self, other):
+        if self.f > other.f:
+            return 1
+        elif self.f == other.f:
+            return 0
+        return -1
+
+def astar( state, heuristic ):
+    # check goal state
+    if is_goal(state):
+        print "Obvious solution"
+
+    cur_node = ASNode(state)
+    cur_node.h = heuristic(state)
+    cur_node.f = 0
+
+    pq = []
+    explored = []
+    pq.append(cur_node)
+    state_map = { state:cur_node }
+
+    looping = set()
+    numiters = 0
+    
+    while len(pq) > 0:
+#        print "%d items in the heap"%len(pq)
+        v = heappop(pq)
+        explored.append(v)
+
+        if is_goal(v.state):
+            print "found it"
+            display(v.state)
+            return
+
+        looping.add(v.state)
+        if numiters == 1000:
+            for l in looping:
+                display(l)
+                print "------------------"
+            numiters = 0
+        numiters += 1
+
+        for neighbor in reversed(state_neighbors(v.state)):
+            # Make neighbor into an ASNode if it isn't already
+            if neighbor in state_map:
+                neighbor = state_map[neighbor]
+            else:
+                node = ASNode(neighbor)
+                node.h = heuristic(neighbor)
+                state_map[neighbor] = node
+                neighbor = node
+
+            if neighbor in explored:
+                continue
+
+            if v.g + 1 + neighbor.h < neighbor.f or neighbor not in pq:
+                neighbor.prev = v
+                neighbor.g = neighbor.prev.g + 1
+                neighbor.f = v.g + 1 + neighbor.h
+                if neighbor not in pq:
+                    heappush(pq, neighbor)
+
